@@ -8,6 +8,7 @@ import java.time.LocalDate;
 public class FilmValidator implements Validator<Film> {
     private static final int DESCRIPTION_LENGTH = 200;
     private static final LocalDate MINIMUM_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+
     @Override
     public void validate(Film film) {
 
