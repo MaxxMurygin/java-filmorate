@@ -8,10 +8,10 @@ public class UserValidator implements Validator<User> {
     public void validate(User user) {
         String name = user.getName();
         String login = user.getLogin();
-        if (login.contains(" ")){
+        if (login.contains(" ")) {
             throw new UserValidationException("Недопустимый логин ");
         }
-        if (name == null){
+        if (name == null) {
             user.setName(login);
         } else {
             if (name.isBlank() || name.isEmpty()) {
