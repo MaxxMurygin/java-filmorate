@@ -40,6 +40,7 @@ class UserControllerTest {
     void clearAll() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/users"));
     }
+
     @Test
     void findAll() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders

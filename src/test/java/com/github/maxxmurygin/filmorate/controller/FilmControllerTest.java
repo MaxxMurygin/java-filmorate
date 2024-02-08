@@ -40,6 +40,7 @@ class FilmControllerTest {
     void clearAll() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/films"));
     }
+
     @Test
     void findAll() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
@@ -103,6 +104,7 @@ class FilmControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn();
     }
+
     @Test
     void createWith200SymbolsDescription() throws Exception {
         film.setDescription("200 symbols description 200 symbols description 200 symbols description " +
@@ -149,6 +151,7 @@ class FilmControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn();
     }
+
     @Test
     void updateOk() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
