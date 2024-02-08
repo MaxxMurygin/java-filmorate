@@ -20,24 +20,25 @@ public class UserController {
     private final HashMap<Integer, User> users = new HashMap<>();
     private final UserValidator validator = new UserValidator();
     private int id = 0;
+
     @GetMapping
-    public List<User> findAll(){
+    public List<User> findAll() {
         return new ArrayList<>(users.values());
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user){
-        if (users.containsKey(user.getId())){
+    public User create(@Valid @RequestBody User user) {
+        if (users.containsKey(user.getId())) {
             log.error("Пользователь {} с ID {} уже существует ", user.getLogin(), user.getId());
             return user;
         }
-        if (user.getId() == 0){
+        if (user.getId() == 0) {
             user.setId(generateId());
         }
 
         try {
             validator.validate(user);
-        } catch (UserValidationException e){
+        } catch (UserValidationException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Ошибка валидации ", e);
@@ -48,17 +49,17 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user){
+    public User update(@Valid @RequestBody User user) {
         User stored = users.get(user.getId());
 
-        if (stored == null){
+        if (stored == null) {
             log.error("Пользователя {} не существует ", user.getLogin());
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Пользователя не существует ");
         }
         try {
             validator.validate(user);
-        } catch (UserValidationException e){
+        } catch (UserValidationException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Ошибка валидации ", e);
@@ -72,11 +73,11 @@ public class UserController {
     }
 
     @DeleteMapping
-    private void deleteAll(){
+    private void deleteAll() {
         users.clear();
     }
 
-    private int generateId(){
+    private int generateId() {
         return ++id;
     }
 }

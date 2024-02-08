@@ -3,7 +3,7 @@ package com.github.maxxmurygin.filmorate.validators;
 import com.github.maxxmurygin.filmorate.exeptions.UserValidationException;
 import com.github.maxxmurygin.filmorate.model.User;
 
-public class UserValidator implements Validator<User>{
+public class UserValidator implements Validator<User> {
     @Override
     public void validate(User user) {
         String name = user.getName();
