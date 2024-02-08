@@ -14,7 +14,7 @@ public class UserValidator implements Validator<User> {
         if (name == null){
             user.setName(login);
         } else {
-            if (name.isBlank() || name.isEmpty()){
+            if (name.isBlank() || name.isEmpty()) {
                 user.setName(login);
             }
         }

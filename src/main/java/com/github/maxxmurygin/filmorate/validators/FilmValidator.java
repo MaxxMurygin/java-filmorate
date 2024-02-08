@@ -6,12 +6,12 @@ import com.github.maxxmurygin.filmorate.model.Film;
 import java.time.LocalDate;
 
 public class FilmValidator implements Validator<Film> {
-    private final int DESCRIPTION_LENGTH = 200;
-    private final LocalDate MINIMUM_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @Override
     public void validate(Film film) {
-        if (film.getDescription().length() > DESCRIPTION_LENGTH){
+        int DESCRIPTION_LENGTH = 200;
+        LocalDate MINIMUM_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+        if (film.getDescription().length() > DESCRIPTION_LENGTH) {
             throw new FilmValidationException("Слишком длинное описание");
         }
         if (film.getReleaseDate().isBefore(MINIMUM_RELEASE_DATE)){
