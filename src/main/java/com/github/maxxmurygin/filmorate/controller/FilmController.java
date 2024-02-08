@@ -22,22 +22,22 @@ public class FilmController {
     private int id = 0;
 
     @GetMapping
-    public List<Film> findAll(){
+    public List<Film> findAll() {
         return new ArrayList<>(films.values());
     }
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film film){
-        if (films.containsKey(film.getId())){
+    public Film create(@Valid @RequestBody Film film) {
+        if (films.containsKey(film.getId())) {
             log.error("Фильм {} с ID {} уже существует", film.getName(), film.getId());
             return film;
         }
-        if (film.getId() == 0){
+        if (film.getId() == 0) {
             film.setId(generateId());
         }
         try {
             validator.validate(film);
-        } catch (FilmValidationException e){
+        } catch (FilmValidationException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Ошибка валидации фильма ", e);
@@ -48,16 +48,16 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film film){
+    public Film update(@Valid @RequestBody Film film) {
         Film stored = films.get(film.getId());
-        if (stored == null){
+        if (stored == null) {
             log.error("Фильма {} ID {} нее существует", film.getName(), film.getId());
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Фильма не существует ");
         }
         try {
             validator.validate(film);
-        } catch (FilmValidationException e){
+        } catch (FilmValidationException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Ошибка валидации фильма", e);
@@ -71,11 +71,11 @@ public class FilmController {
     }
 
     @DeleteMapping
-    private void deleteAll(){
+    private void deleteAll() {
         films.clear();
     }
 
-    private int generateId(){
+    private int generateId() {
         return ++id;
     }
 }
