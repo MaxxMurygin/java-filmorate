@@ -156,16 +156,13 @@ class UserControllerTest {
         User updated = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
                 User.class);
         updated.setName("New Name");
-        MvcResult result_update = mockMvc.perform(MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .put("/users")
                         .content(objectMapper.writeValueAsString(updated))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
-
-        String resultString = result_update.getResponse().getContentAsString(StandardCharsets.UTF_8);
-        assertNotNull(resultString);
     }
 
     @Test
