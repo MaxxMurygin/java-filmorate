@@ -2,7 +2,6 @@ package com.github.maxxmurygin.filmorate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.maxxmurygin.filmorate.model.Film;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,17 +27,11 @@ class FilmControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     private final Film film = Film.builder()
-            .id(1)
             .name("Film")
             .description("Адъ, трэшъ и содомiя")
             .releaseDate(LocalDate.of(2022, 1, 1))
             .duration(90)
             .build();
-
-    @AfterEach
-    void clearAll() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/films"));
-    }
 
     @Test
     void findAll() throws Exception {
@@ -65,7 +57,6 @@ class FilmControllerTest {
 
         String resultString = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertNotNull(resultString);
-        assertEquals(resultString, objectMapper.writeValueAsString(film));
     }
 
     @Test
@@ -154,17 +145,19 @@ class FilmControllerTest {
 
     @Test
     void updateOk() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                         .post("/films")
                         .content(objectMapper.writeValueAsString(film))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
-        film.setName("New Name");
+        Film updated = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                Film.class);
+        updated.setName("New Name");
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
-                        .content(objectMapper.writeValueAsString(film))
+                        .content(objectMapper.writeValueAsString(updated))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

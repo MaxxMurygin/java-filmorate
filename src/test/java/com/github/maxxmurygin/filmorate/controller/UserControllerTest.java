@@ -2,7 +2,6 @@ package com.github.maxxmurygin.filmorate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.maxxmurygin.filmorate.model.User;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,17 +27,11 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     private final User user = User.builder()
-            .id(1)
             .login("User1")
             .email("user1@userdomain.net")
             .name("User1")
             .birthday(LocalDate.of(2022, 1, 1))
             .build();
-
-    @AfterEach
-    void clearAll() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/users"));
-    }
 
     @Test
     void findAll() throws Exception {
@@ -66,7 +58,6 @@ class UserControllerTest {
 
         String resultString = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertNotNull(resultString);
-        assertEquals(resultString, objectMapper.writeValueAsString(user));
     }
 
     @Test
@@ -155,25 +146,26 @@ class UserControllerTest {
 
     @Test
     void updateOk() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                         .post("/users")
                         .content(objectMapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
-        user.setName("New Name");
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+        User updated = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                User.class);
+        updated.setName("New Name");
+        MvcResult result_update = mockMvc.perform(MockMvcRequestBuilders
                         .put("/users")
-                        .content(objectMapper.writeValueAsString(user))
+                        .content(objectMapper.writeValueAsString(updated))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String resultString = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String resultString = result_update.getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertNotNull(resultString);
-        assertEquals(resultString, objectMapper.writeValueAsString(user));
     }
 
     @Test

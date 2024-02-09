@@ -32,9 +32,7 @@ public class FilmController {
             log.error("Фильм {} с ID {} уже существует", film.getName(), film.getId());
             return film;
         }
-        if (film.getId() == 0) {
-            film.setId(generateId());
-        }
+        film.setId(generateId());
         try {
             validator.validate(film);
         } catch (FilmValidationException e) {
@@ -68,11 +66,6 @@ public class FilmController {
         stored.setDescription(film.getDescription());
         log.debug("Фильм {} обновлен", film.getId());
         return film;
-    }
-
-    @DeleteMapping
-    private void deleteAll() {
-        films.clear();
     }
 
     private int generateId() {

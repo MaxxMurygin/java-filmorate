@@ -32,10 +32,7 @@ public class UserController {
             log.error("Пользователь {} с ID {} уже существует ", user.getLogin(), user.getId());
             return user;
         }
-        if (user.getId() == 0) {
-            user.setId(generateId());
-        }
-
+        user.setId(generateId());
         try {
             validator.validate(user);
         } catch (UserValidationException e) {
