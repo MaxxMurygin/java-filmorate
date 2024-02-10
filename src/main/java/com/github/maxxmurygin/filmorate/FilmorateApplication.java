@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate;
+package com.github.maxxmurygin.filmorate;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
