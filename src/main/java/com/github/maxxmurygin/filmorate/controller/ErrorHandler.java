@@ -9,19 +9,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ErrorHandler {
-
-    @ExceptionHandler(
-            {FilmValidationException.class,
-                    UserValidationException.class})
+    @ExceptionHandler({FilmValidationException.class, UserValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final RuntimeException e) {
-        return new ErrorResponse(
-                String.format("Ошибка валидации: \"%s\".", e.getMessage())
-        );
+        return new ErrorResponse(String.format("Ошибка валидации: \"%s\".", e.getMessage()));
     }
-    @ExceptionHandler(
-            {FilmNotExistException.class,
-                    UserNotExistException.class})
+
+    @ExceptionHandler({FilmNotExistException.class, UserNotExistException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotExist(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
