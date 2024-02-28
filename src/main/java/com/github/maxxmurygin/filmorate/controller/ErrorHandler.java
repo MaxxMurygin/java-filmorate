@@ -21,9 +21,7 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(
-            {FilmAlreadyExistException.class,
-                    UserAlreadyExistException.class})
+    @ExceptionHandler({FilmAlreadyExistException.class, UserAlreadyExistException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleAlreadyExist(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
