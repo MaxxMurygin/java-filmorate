@@ -2,7 +2,6 @@ package com.github.maxxmurygin.filmorate.controller;
 
 import com.github.maxxmurygin.filmorate.model.User;
 import com.github.maxxmurygin.filmorate.service.UserService;
-import com.github.maxxmurygin.filmorate.storage.film.InMemoryFilmStorage;
 import com.github.maxxmurygin.filmorate.storage.user.InMemoryUserStorage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +30,7 @@ public class UserController {
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        User u = userService.create(user);
-        return u;
+        return userService.create(user);
 
     }
 
@@ -49,7 +47,6 @@ public class UserController {
 
     @GetMapping("/{userId}/friends")
     public List<User> findFriends(@PathVariable Integer userId) {
-        List<User> df = userService.findFriends(userId);
         return userService.findFriends(userId);
     }
 
@@ -63,5 +60,11 @@ public class UserController {
     public User removeFriend(@PathVariable Integer userId,
                              @PathVariable Integer friendId) {
         return userService.removeFriend(userId, friendId);
+    }
+
+    @GetMapping("/{userId}/friends/common/{otherId}")
+    public List<User> findCommonFriends(@PathVariable Integer userId,
+                                        @PathVariable Integer otherId) {
+        return userService.findCommonFriends(userId, otherId);
     }
 }

@@ -1,15 +1,13 @@
 package com.github.maxxmurygin.filmorate.storage.film;
 
-import com.github.maxxmurygin.filmorate.exeptions.FilmValidationException;
+import com.github.maxxmurygin.filmorate.exeptions.FilmNotExistException;
 import com.github.maxxmurygin.filmorate.model.Film;
-import com.github.maxxmurygin.filmorate.validators.FilmValidator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 @Component
 @Slf4j
@@ -21,6 +19,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     public Film create(Film film) {
         Integer id = generateId();
         film.setId(id);
+        film.setLikes(new HashSet<>());
         films.put(id, film);
         log.debug("Фильм {} ID {} создан", film.getName(), film.getId());
         return film;
@@ -38,11 +37,6 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     @Override
-    public Film remove(Integer id) {
-        return films.remove(id);
-    }
-
-    @Override
     public Film findById(Integer id) {
         return films.get(id);
     }
@@ -50,6 +44,30 @@ public class InMemoryFilmStorage implements FilmStorage{
     @Override
     public Collection<Film> findAll() {
         return films.values();
+    }
+
+    @Override
+    public Film like(Integer filmId, Integer userId) {
+        Film f = films.get(filmId);
+
+        if (f == null) {
+            throw new FilmNotExistException(String.format(
+                    "Фильм c ID = %d не найден", filmId));
+        }
+        f.getLikes().add(userId);
+        return f;
+    }
+
+    @Override
+    public Film dislike(Integer filmId, Integer userId) {
+        Film f = films.get(filmId);
+
+        if (f == null) {
+            throw new FilmNotExistException(String.format(
+                    "Фильм c ID = %d не найден", filmId));
+        }
+        f.getLikes().remove(userId);
+        return f;
     }
 
     private Integer generateId() {

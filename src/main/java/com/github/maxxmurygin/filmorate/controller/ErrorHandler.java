@@ -1,8 +1,7 @@
 package com.github.maxxmurygin.filmorate.controller;
 
 import com.github.maxxmurygin.filmorate.exeptions.*;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import ru.yandex.practicum.catsgram.model.ErrorResponse;
+import com.github.maxxmurygin.filmorate.model.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,7 +19,6 @@ public class ErrorHandler {
                 String.format("Ошибка валидации: \"%s\".", e.getMessage())
         );
     }
-
     @ExceptionHandler(
             {FilmNotExistException.class,
                     UserNotExistException.class})

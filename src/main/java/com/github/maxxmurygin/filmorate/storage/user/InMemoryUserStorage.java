@@ -1,19 +1,13 @@
 package com.github.maxxmurygin.filmorate.storage.user;
 
-import com.github.maxxmurygin.filmorate.exeptions.StorageException;
 import com.github.maxxmurygin.filmorate.exeptions.UserNotExistException;
-import com.github.maxxmurygin.filmorate.exeptions.UserValidationException;
 import com.github.maxxmurygin.filmorate.model.User;
-import com.github.maxxmurygin.filmorate.validators.UserValidator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 @Component
 @Slf4j
@@ -26,9 +20,7 @@ public class InMemoryUserStorage implements UserStorage{
     public User create(User user) {
         Integer id = generateId();
         user.setId(id);
-        if (user.getFriends() == null) {
-            user.setFriends(new HashSet<>());
-        }
+        user.setFriends(new HashSet<>());
         users.put(id, user);
         log.debug("Пользователь {} создан ", user.getLogin());
         return user;
@@ -42,14 +34,8 @@ public class InMemoryUserStorage implements UserStorage{
         stored.setLogin(user.getLogin());
         stored.setName(user.getName());
         stored.setBirthday(user.getBirthday());
-        stored.setFriends(user.getFriends());
         log.debug("Пользователь {} с ID {} обновлен ", user.getLogin(), user.getId());
         return stored;
-    }
-
-    @Override
-    public User remove(Integer id) {
-        return null;
     }
 
     @Override
@@ -69,24 +55,39 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User addFriend(Integer userId, Integer friendId) {
-        Set<Integer> userFriendsIds = users.get(userId).getFriends();
-        Set<Integer> friendFriendsIds = users.get(friendId).getFriends();
+        User u = users.get(userId);
+        User f = users.get(friendId);
 
-        if ((userFriendsIds == null) || (friendFriendsIds == null)) {
-            throw new StorageException("Невозможно получить список друзей");
+        if (u == null) {
+            throw new UserNotExistException(String.format(
+                    "Пользователь c ID = %d не найден", userId));
         }
-        userFriendsIds.add(friendId);
-//        u.setFriends(userFriendsIds);
-        friendFriendsIds.add(userId);
-//        f.setFriends(friendFriendsIds);
+        if (f == null) {
+            throw new UserNotExistException(String.format(
+                    "Пользователь c ID = %d не найден", friendId));
+        }
+        u.getFriends().add(f.getId());
+        f.getFriends().add(u.getId());
         return u;
     }
 
     @Override
     public User removeFriend(Integer userId, Integer friendId) {
-        return null;
-    }
+        User u = users.get(userId);
+        User f = users.get(friendId);
 
+        if (u == null) {
+            throw new UserNotExistException(String.format(
+                    "Пользователь c ID = %d не найден", userId));
+        }
+        if (f == null) {
+            throw new UserNotExistException(String.format(
+                    "Пользователь c ID = %d не найден", friendId));
+        }
+        u.getFriends().add(friendId);
+        f.getFriends().add(userId);
+        return u;
+    }
     private Integer generateId() {
         return ++id;
     }

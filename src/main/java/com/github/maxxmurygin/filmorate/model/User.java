@@ -2,12 +2,12 @@ package com.github.maxxmurygin.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.lang.NonNullApi;
-import org.springframework.lang.NonNullFields;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
