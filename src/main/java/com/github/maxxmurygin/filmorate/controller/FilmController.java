@@ -15,10 +15,11 @@ import java.util.Collection;
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
+    @Autowired
     private final FilmService filmService;
 
     @Autowired
-    public FilmController(InMemoryFilmStorage storage, UserService userService) {
+    public FilmController(@Autowired InMemoryFilmStorage storage, @Autowired UserService userService) {
         this.filmService = new FilmService(storage, userService);
     }
 
