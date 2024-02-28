@@ -88,6 +88,7 @@ public class InMemoryUserStorage implements UserStorage {
         f.getFriends().add(userId);
         return u;
     }
+
     private Integer generateId() {
         return ++id;
     }
