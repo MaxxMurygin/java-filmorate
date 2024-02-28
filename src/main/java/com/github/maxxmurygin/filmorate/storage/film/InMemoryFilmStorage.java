@@ -3,13 +3,13 @@ package com.github.maxxmurygin.filmorate.storage.film;
 import com.github.maxxmurygin.filmorate.exeptions.FilmNotExistException;
 import com.github.maxxmurygin.filmorate.model.Film;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-@Component
+@Service
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private final HashMap<Integer, Film> films = new HashMap<>();
