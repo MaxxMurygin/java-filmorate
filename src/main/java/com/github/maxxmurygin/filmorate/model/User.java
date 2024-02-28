@@ -2,21 +2,21 @@ package com.github.maxxmurygin.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.lang.NonNullApi;
+import org.springframework.lang.NonNullFields;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
 public class User {
     private int id;
-    @NotBlank
-    @Email
-    private String email;
-    @NotBlank
-    private String login;
+    private @NotBlank @Email String email;
+    private @NotBlank String login;
     private String name;
-    @NotNull
-    @PastOrPresent
-    private LocalDate birthday;
+    private @NotNull @PastOrPresent LocalDate birthday;
+    private Set<Integer> friends;
 }
