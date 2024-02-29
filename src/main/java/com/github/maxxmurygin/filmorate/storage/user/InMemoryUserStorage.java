@@ -4,12 +4,13 @@ import com.github.maxxmurygin.filmorate.exeptions.UserNotExistException;
 import com.github.maxxmurygin.filmorate.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-@Component
+@Repository
 @Slf4j
 public class InMemoryUserStorage implements UserStorage{
 

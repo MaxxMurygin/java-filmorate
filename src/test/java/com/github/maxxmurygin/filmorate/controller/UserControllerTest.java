@@ -2,6 +2,7 @@ package com.github.maxxmurygin.filmorate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.maxxmurygin.filmorate.model.User;
+import com.github.maxxmurygin.filmorate.storage.user.InMemoryUserStorage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = {UserController.class})
+@ContextConfiguration(classes = {UserController.class, InMemoryUserStorage.class})
 @WebMvcTest
 class UserControllerTest {
     @Autowired
@@ -128,13 +129,14 @@ class UserControllerTest {
                 .andReturn();
 
         user.setLogin("use r");
-        mockMvc.perform(MockMvcRequestBuilders
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                         .post("/users")
-                        .content(objectMapper.writeValueAsString(user))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(user)))
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
+        System.out.println();
     }
 
     @Test
@@ -156,7 +158,6 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
-        System.out.println();
     }
 
     @Test
