@@ -5,6 +5,7 @@ import com.github.maxxmurygin.filmorate.exeptions.UserNotExistException;
 import com.github.maxxmurygin.filmorate.model.User;
 import com.github.maxxmurygin.filmorate.storage.user.UserStorage;
 import com.github.maxxmurygin.filmorate.validators.UserValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserService {
 
     private final UserStorage storage;
@@ -29,6 +31,7 @@ public class UserService {
         User existing = storage.findByEmail(user.getEmail());
 
         if (existing != null) {
+            log.debug(existing.getEmail());
             throw new UserAlreadyExistException(String.format(
                     "Пользователь c ID = %d с Email %s уже существует", existing.getId(), existing.getEmail()));
         }

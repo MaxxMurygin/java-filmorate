@@ -2,6 +2,10 @@ package com.github.maxxmurygin.filmorate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.maxxmurygin.filmorate.model.Film;
+import com.github.maxxmurygin.filmorate.service.FilmService;
+import com.github.maxxmurygin.filmorate.service.UserService;
+import com.github.maxxmurygin.filmorate.storage.film.InMemoryFilmStorage;
+import com.github.maxxmurygin.filmorate.storage.user.InMemoryUserStorage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,13 +23,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = {FilmController.class})
+@ContextConfiguration(classes = {FilmController.class, InMemoryFilmStorage.class,
+        UserService.class, InMemoryUserStorage.class, FilmService.class})
 @WebMvcTest
 class FilmControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+
     private final Film film = Film.builder()
             .name("Film")
             .description("Адъ, трэшъ и содомiя")
@@ -89,9 +95,7 @@ class FilmControllerTest {
                 "200 symbols description 200 symb1");
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/films")
-                        .content(objectMapper.writeValueAsString(film))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(film)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
     }
@@ -115,9 +119,7 @@ class FilmControllerTest {
         film.setReleaseDate(LocalDate.of(1895, 12, 27));
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/films")
-                        .content(objectMapper.writeValueAsString(film))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(film)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
@@ -168,9 +170,7 @@ class FilmControllerTest {
     void updateUnknown() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
-                        .content(objectMapper.writeValueAsString(film))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(film)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
     }

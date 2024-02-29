@@ -71,6 +71,7 @@ public class FilmService {
 
     public Film findById(Integer id) {
         Film f = storage.findById(id);
+
         if (f == null) {
             throw new FilmNotExistException("Фильм не найден");
         }

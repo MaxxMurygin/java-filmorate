@@ -3,7 +3,6 @@ package com.github.maxxmurygin.filmorate.storage.user;
 import com.github.maxxmurygin.filmorate.exeptions.UserNotExistException;
 import com.github.maxxmurygin.filmorate.model.User;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -13,7 +12,6 @@ import java.util.HashSet;
 @Repository
 @Slf4j
 public class InMemoryUserStorage implements UserStorage{
-
     private final HashMap<Integer, User> users = new HashMap<>();
     private Integer id = 0;
 
@@ -41,7 +39,11 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User findByEmail(String email) {
-        return null;
+        return users.values()
+                .stream()
+                .filter(u -> u.getEmail().equals(email))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

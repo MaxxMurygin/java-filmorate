@@ -2,6 +2,7 @@ package com.github.maxxmurygin.filmorate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.maxxmurygin.filmorate.model.User;
+import com.github.maxxmurygin.filmorate.service.UserService;
 import com.github.maxxmurygin.filmorate.storage.user.InMemoryUserStorage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,22 +40,9 @@ class UserControllerTest {
             .build();
 
     @Test
-    void findAll() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                        .get("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        String resultString = result.getResponse().getContentAsString();
-        assertNotNull(resultString);
-    }
-
-    @Test
     void createOk() throws Exception {
 
-//        MvcResult result =
-                mockMvc.perform(MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .post("/users")
                         .content(objectMapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,13 +52,18 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.name").value("User1"))
                 .andExpect(jsonPath("$.email").value("user1@userdomain.net"))
                 .andExpect(jsonPath("$.birthday").value("2022-01-01"));
-//                .andReturn();
+    }
 
-//        String resultString = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
-//        assertNotNull(resultString);
-//        User returned = objectMapper.readValue(resultString, User.class);
-//        user.setId(returned.getId());
-//        assertEquals(user, returned, "Пользователи не эквивалентны.");
+    @Test
+    void findAll() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        String resultString = result.getResponse().getContentAsString();
+        assertNotNull(resultString);
     }
 
     @Test
@@ -129,18 +122,16 @@ class UserControllerTest {
                 .andReturn();
 
         user.setLogin("use r");
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .post("/users")
                         .content(objectMapper.writeValueAsString(user)))
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
-        System.out.println();
     }
 
     @Test
     void createWithBirthdayInFutureAndPresent() throws Exception {
+        user.setEmail("another@google.com");
         user.setBirthday(LocalDate.now());
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/users")
@@ -162,6 +153,7 @@ class UserControllerTest {
 
     @Test
     void updateOk() throws Exception {
+        user.setEmail("another2@google.com");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                         .post("/users")
                         .content(objectMapper.writeValueAsString(user))
@@ -187,11 +179,9 @@ class UserControllerTest {
 
     @Test
     void updateUnknown() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                         .put("/users")
-                        .content(objectMapper.writeValueAsString(user))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
     }

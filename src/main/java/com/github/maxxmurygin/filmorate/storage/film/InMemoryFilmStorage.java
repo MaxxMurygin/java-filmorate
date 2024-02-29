@@ -3,7 +3,6 @@ package com.github.maxxmurygin.filmorate.storage.film;
 import com.github.maxxmurygin.filmorate.exeptions.FilmNotExistException;
 import com.github.maxxmurygin.filmorate.model.Film;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
