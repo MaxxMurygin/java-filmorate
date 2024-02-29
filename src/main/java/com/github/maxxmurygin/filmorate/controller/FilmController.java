@@ -1,74 +1,63 @@
 package com.github.maxxmurygin.filmorate.controller;
 
-import com.github.maxxmurygin.filmorate.exeptions.FilmValidationException;
 import com.github.maxxmurygin.filmorate.model.Film;
-import com.github.maxxmurygin.filmorate.validators.FilmValidator;
+import com.github.maxxmurygin.filmorate.service.FilmService;
+import com.github.maxxmurygin.filmorate.service.UserService;
+import com.github.maxxmurygin.filmorate.storage.film.InMemoryFilmStorage;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-    private final HashMap<Integer, Film> films = new HashMap<>();
-    private final FilmValidator validator = new FilmValidator();
-    private int id = 0;
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(InMemoryFilmStorage storage, UserService userService) {
+        this.filmService = new FilmService(storage, userService);
+    }
+
 
     @GetMapping
-    public List<Film> findAll() {
-        return new ArrayList<>(films.values());
+    public Collection<Film> findAll() {
+        return filmService.findAll();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        if (films.containsKey(film.getId())) {
-            log.error("Фильм {} с ID {} уже существует", film.getName(), film.getId());
-            return film;
-        }
-        film.setId(generateId());
-        try {
-            validator.validate(film);
-        } catch (FilmValidationException e) {
-            log.error(e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Ошибка валидации фильма ", e);
-        }
-        log.debug("Фильм {} ID {} создан", film.getName(), film.getId());
-        films.put(film.getId(), film);
-        return film;
+        return filmService.create(film);
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
-        Film stored = films.get(film.getId());
-        if (stored == null) {
-            log.error("Фильма {} ID {} нее существует", film.getName(), film.getId());
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Фильма не существует ");
-        }
-        try {
-            validator.validate(film);
-        } catch (FilmValidationException e) {
-            log.error(e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Ошибка валидации фильма", e);
-        }
-        stored.setDuration(film.getDuration());
-        stored.setReleaseDate(film.getReleaseDate());
-        stored.setName(film.getName());
-        stored.setDescription(film.getDescription());
-        log.debug("Фильм {} обновлен", film.getId());
-        return film;
+        return filmService.update(film);
     }
 
-    private int generateId() {
-        return ++id;
+    @GetMapping("/{filmId}")
+    public Film findById(@PathVariable int filmId) {
+        return filmService.findById(filmId);
+    }
+
+    @PutMapping("/{filmId}/like/{userId}")
+    public Film likeFilm(@PathVariable int filmId,
+                         @PathVariable int userId) {
+        return filmService.likeFilm(filmId, userId);
+    }
+
+    @DeleteMapping("/{filmId}/like/{userId}")
+    public Film dislikeFilm(@PathVariable int filmId,
+                         @PathVariable int userId) {
+        return filmService.dislikeFilm(filmId, userId);
+    }
+
+    @GetMapping("/popular")
+    public Collection<Film> getPopular(@RequestParam(defaultValue = "10", required = false) Integer count) {
+        return filmService.getPopular(count);
+
     }
 }
