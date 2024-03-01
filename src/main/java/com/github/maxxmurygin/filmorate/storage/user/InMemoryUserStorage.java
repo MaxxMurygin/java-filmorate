@@ -40,7 +40,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User findByEmail(String email) {
-        return null;
+        return users.values()
+                .stream()
+                .filter(u -> u.getEmail().equals(email))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
