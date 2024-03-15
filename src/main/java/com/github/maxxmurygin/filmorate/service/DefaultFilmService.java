@@ -64,7 +64,7 @@ public class DefaultFilmService implements FilmService {
     }
 
     @Override
-    public Film removeLike(Integer filmId, Integer userId) {
+    public void removeLike(Integer filmId, Integer userId) {
         if (userService.findById(userId) == null) {
             throw new UserNotExistException(String.format(
                     "Пользователь c ID = %d не найден", userId));
@@ -74,7 +74,6 @@ public class DefaultFilmService implements FilmService {
                     "Фильм c ID = %d не найден", filmId));
         }
         likesRepository.removeLike(filmId, userId);
-        return filmRepository.findById(filmId);
     }
 
     @Override

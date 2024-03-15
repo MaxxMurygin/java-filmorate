@@ -67,13 +67,13 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public User addFriend(Integer userId, Integer friendId) {
-        return userRepository.addFriend(userId, friendId);
+    public void addFriend(Integer userId, Integer friendId) {
+        friendsRepository.addFriend(userId, friendId);
     }
 
     @Override
-    public User removeFriend(Integer userId, Integer friendId) {
-        return userRepository.removeFriend(userId, friendId);
+    public void removeFriend(Integer userId, Integer friendId) {
+        friendsRepository.removeFriend(userId, friendId);
     }
 
     @Override
@@ -91,7 +91,6 @@ public class DefaultUserService implements UserService {
 
     @Override
     public List<User> findCommonFriends(Integer userId, Integer otherId) {
-
         return friendsRepository.findCommonFriends(userId, otherId)
                 .stream()
                 .map(userRepository::findById)

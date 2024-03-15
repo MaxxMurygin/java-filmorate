@@ -57,47 +57,6 @@ public class InMemoryUserRepository implements UserRepository {
         return users.values();
     }
 
-    @Override
-    public User addFriend(Integer userId, Integer friendId) {
-        User u = users.get(userId);
-        User f = users.get(friendId);
-
-        if (u == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", userId));
-        }
-        if (f == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", friendId));
-        }
-//        u.getFriends().add(f.getId());
-//        f.getFriends().add(u.getId());
-        return u;
-    }
-
-    @Override
-    public User removeFriend(Integer userId, Integer friendId) {
-        User u = users.get(userId);
-        User f = users.get(friendId);
-
-        if (u == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", userId));
-        }
-        if (f == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", friendId));
-        }
-//        u.getFriends().add(friendId);
-//        f.getFriends().add(userId);
-        return u;
-    }
-
-    @Override
-    public List<User> findFriends(Integer userId) {
-        return null;
-    }
-
     private Integer generateId() {
         return ++id;
     }

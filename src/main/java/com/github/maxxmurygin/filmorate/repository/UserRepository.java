@@ -12,7 +12,4 @@ public interface UserRepository {
     User findByEmail(String email);
     User findById(Integer id);
     Collection<User> findAll();
-    User addFriend(Integer userId, Integer friendId);
-    User removeFriend(Integer userId, Integer friendId);
-    List<User> findFriends(Integer userId);
 }

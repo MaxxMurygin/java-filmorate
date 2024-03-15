@@ -21,7 +21,6 @@ public class InMemoryFilmRepository implements FilmRepository {
     public Film create(Film film) {
         Integer id = generateId();
         film.setId(id);
-//        film.setLikes(new HashSet<>());
         films.put(id, film);
         log.debug("Фильм {} ID {} создан", film.getName(), film.getId());
         return film;

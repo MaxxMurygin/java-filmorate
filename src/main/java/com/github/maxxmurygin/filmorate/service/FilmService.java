@@ -11,7 +11,7 @@ public interface FilmService {
 
     Film addLike(Integer filmId, Integer userId);
 
-    Film removeLike(Integer filmId, Integer userId);
+    void removeLike(Integer filmId, Integer userId);
 
     Collection<Film> findAll();
 
