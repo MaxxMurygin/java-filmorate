@@ -3,6 +3,7 @@ package com.github.maxxmurygin.filmorate.service;
 import com.github.maxxmurygin.filmorate.model.Film;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface FilmService {
     Film create(Film film);
@@ -13,9 +14,9 @@ public interface FilmService {
 
     void removeLike(Integer filmId, Integer userId);
 
-    Collection<Film> findAll();
+    List<Film> findAll();
 
     Film findById(Integer id);
 
-    Collection<Film> getPopular(Integer count);
+    List<Film> getPopular(Integer count);
 }

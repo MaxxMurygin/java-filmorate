@@ -3,6 +3,7 @@ package com.github.maxxmurygin.filmorate.repository;
 import com.github.maxxmurygin.filmorate.model.Film;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface FilmRepository {
 
@@ -10,5 +11,5 @@ public interface FilmRepository {
     Film update(Film film);
 
     Film findById(Integer id);
-    Collection<Film> findAll();
+    List<Film> findAll();
 }

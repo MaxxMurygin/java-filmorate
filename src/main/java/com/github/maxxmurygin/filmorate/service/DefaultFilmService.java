@@ -77,7 +77,7 @@ public class DefaultFilmService implements FilmService {
     }
 
     @Override
-    public Collection<Film> findAll() {
+    public List<Film> findAll() {
         return filmRepository.findAll();
     }
 
@@ -92,8 +92,16 @@ public class DefaultFilmService implements FilmService {
     }
 
     @Override
-    public Collection<Film> getPopular(Integer count) {
-        return likesRepository.getPopular(count)
+    public List<Film> getPopular(Integer count) {
+        List<Integer> likesFromRepository = likesRepository.getPopular(count);
+
+        if (likesFromRepository.isEmpty()) {
+            return filmRepository.findAll()
+                    .stream()
+                    .limit(count)
+                    .collect(Collectors.toList());
+        }
+        return likesFromRepository
                 .stream()
                 .map(filmRepository::findById)
                 .collect(Collectors.toList());

@@ -18,7 +18,11 @@ public class InMemoryFriendsRepository implements FriendsRepository{
         if (!friends.containsKey(followingUserId)) {
             friends.put(followingUserId, new HashSet<>());
         }
+        if (!friends.containsKey(followedUserid)) {
+            friends.put(followedUserid, new HashSet<>());
+        }
         friends.get(followingUserId).add(followedUserid);
+        friends.get(followedUserid).add(followingUserId);
     }
 
     @Override
@@ -46,8 +50,17 @@ public class InMemoryFriendsRepository implements FriendsRepository{
 
     @Override
     public List<Integer> findCommonFriends(Integer userId, Integer otherId) {
-        Set<Integer> commonFriends = friends.get(userId);
-        commonFriends.retainAll(friends.get(otherId));
-        return new ArrayList<>(commonFriends);
+        Set<Integer> userFriends = friends.get(userId);
+        if (userFriends == null) {
+            userFriends = new HashSet<>();
+        }
+
+        Set<Integer> otherFriends = friends.get(otherId);
+        if (otherFriends == null) {
+            otherFriends = new HashSet<>();
+        }
+        ArrayList<Integer> commonFriends = new ArrayList<>(userFriends);
+        commonFriends.retainAll(otherFriends);
+        return commonFriends;
     }
 }

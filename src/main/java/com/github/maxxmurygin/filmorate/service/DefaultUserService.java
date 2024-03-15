@@ -3,7 +3,6 @@ package com.github.maxxmurygin.filmorate.service;
 import com.github.maxxmurygin.filmorate.exeptions.UserAlreadyExistException;
 import com.github.maxxmurygin.filmorate.exeptions.UserNotExistException;
 import com.github.maxxmurygin.filmorate.model.User;
-import com.github.maxxmurygin.filmorate.repository.FilmRepository;
 import com.github.maxxmurygin.filmorate.repository.FriendsRepository;
 import com.github.maxxmurygin.filmorate.repository.UserRepository;
 import com.github.maxxmurygin.filmorate.validators.UserValidator;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +34,10 @@ public class DefaultUserService implements UserService {
                     "Пользователь c ID = %d с Email %s уже существует", existing.getId(), existing.getEmail()));
         }
         validator.validate(user);
-        return userRepository.create(user);
+        log.debug("Создаем пользователя {}", user.getLogin());
+        User u = userRepository.create(user);
+        log.debug("Создан пользователь {}", u.getLogin());
+        return u;
     }
 
     @Override
@@ -48,7 +49,10 @@ public class DefaultUserService implements UserService {
                     "Пользователя c ID = %d с Email %s не существует", user.getId(), user.getEmail()));
         }
         validator.validate(user);
-        return userRepository.update(user);
+        log.debug("Создаем пользователя {}", user.getLogin());
+        User u = userRepository.update(user);
+        log.debug("Создан пользователь {}", u.getLogin());
+        return u;
     }
 
     @Override
@@ -68,22 +72,44 @@ public class DefaultUserService implements UserService {
 
     @Override
     public void addFriend(Integer userId, Integer friendId) {
+        User u = userRepository.findById(userId);
+        User f = userRepository.findById(friendId);
+
+        if (u == null) {
+            throw new UserNotExistException(String.format(
+                    "Пользователь c ID = %d не найден", userId));
+        }
+        if (f == null) {
+            throw new UserNotExistException(String.format(
+                    "Пользователь c ID = %d не найден", userId));
+        }
         friendsRepository.addFriend(userId, friendId);
     }
 
     @Override
     public void removeFriend(Integer userId, Integer friendId) {
+        User u = userRepository.findById(userId);
+        User f = userRepository.findById(friendId);
+
+        if (u == null) {
+            throw new UserNotExistException(String.format(
+                    "Пользователь c ID = %d не найден", userId));
+        }
+        if (f == null) {
+            throw new UserNotExistException(String.format(
+                    "Пользователь c ID = %d не найден", userId));
+        }
         friendsRepository.removeFriend(userId, friendId);
     }
 
     @Override
-    public List<User> findFriends(Integer id) {
-        User u = userRepository.findById(id);
+    public List<User> findFriends(Integer userId) {
+        User u = userRepository.findById(userId);
 
         if (u == null) {
             throw new UserNotExistException("Пользователь не найден");
         }
-        return friendsRepository.findFriends(id)
+        return friendsRepository.findFriends(userId)
                 .stream()
                 .map(userRepository::findById)
                 .collect(Collectors.toList());
