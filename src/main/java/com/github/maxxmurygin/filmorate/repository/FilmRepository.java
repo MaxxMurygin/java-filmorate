@@ -1,16 +1,14 @@
-package com.github.maxxmurygin.filmorate.storage.film;
+package com.github.maxxmurygin.filmorate.repository;
 
 import com.github.maxxmurygin.filmorate.model.Film;
 
 import java.util.Collection;
 
-public interface FilmStorage {
+public interface FilmRepository {
 
     Film create(Film film);
     Film update(Film film);
 
     Film findById(Integer id);
     Collection<Film> findAll();
-    Film like(Integer filmId, Integer userId);
-    Film dislike(Integer filmId, Integer userId);
 }

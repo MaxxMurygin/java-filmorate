@@ -2,10 +2,9 @@ package com.github.maxxmurygin.filmorate.controller;
 
 import com.github.maxxmurygin.filmorate.model.Film;
 import com.github.maxxmurygin.filmorate.service.FilmService;
-import com.github.maxxmurygin.filmorate.service.UserService;
-import com.github.maxxmurygin.filmorate.storage.film.InMemoryFilmStorage;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -14,14 +13,9 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
-    @Autowired private final FilmService filmService;
-
-    @Autowired
-    public FilmController(InMemoryFilmStorage storage, UserService userService) {
-        this.filmService = new FilmService(storage, userService);
-    }
-
+    private final FilmService filmService;
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -29,6 +23,7 @@ public class FilmController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Film create(@Valid @RequestBody Film film) {
         return filmService.create(film);
     }
@@ -44,15 +39,16 @@ public class FilmController {
     }
 
     @PutMapping("/{filmId}/like/{userId}")
-    public Film likeFilm(@PathVariable int filmId,
-                         @PathVariable int userId) {
-        return filmService.likeFilm(filmId, userId);
+    public Film addLike(@PathVariable int filmId,
+                        @PathVariable int userId) {
+        return filmService.addLike(filmId, userId);
     }
 
     @DeleteMapping("/{filmId}/like/{userId}")
-    public Film dislikeFilm(@PathVariable int filmId,
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeLike(@PathVariable int filmId,
                          @PathVariable int userId) {
-        return filmService.dislikeFilm(filmId, userId);
+        filmService.removeLike(filmId, userId);
     }
 
     @GetMapping("/popular")

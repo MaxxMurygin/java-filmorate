@@ -1,17 +1,18 @@
-package com.github.maxxmurygin.filmorate.storage.user;
+package com.github.maxxmurygin.filmorate.repository;
 
 import com.github.maxxmurygin.filmorate.exeptions.UserNotExistException;
 import com.github.maxxmurygin.filmorate.model.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 @Repository
+@Primary
 @Slf4j
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserRepository implements UserRepository {
     private final HashMap<Integer, User> users = new HashMap<>();
     private Integer id = 0;
 
@@ -19,7 +20,7 @@ public class InMemoryUserStorage implements UserStorage{
     public User create(User user) {
         Integer id = generateId();
         user.setId(id);
-        user.setFriends(new HashSet<>());
+//        user.setFriends(new HashSet<>());
         users.put(id, user);
         log.debug("Пользователь {} создан ", user.getLogin());
         return user;
@@ -69,8 +70,8 @@ public class InMemoryUserStorage implements UserStorage{
             throw new UserNotExistException(String.format(
                     "Пользователь c ID = %d не найден", friendId));
         }
-        u.getFriends().add(f.getId());
-        f.getFriends().add(u.getId());
+//        u.getFriends().add(f.getId());
+//        f.getFriends().add(u.getId());
         return u;
     }
 
@@ -87,10 +88,16 @@ public class InMemoryUserStorage implements UserStorage{
             throw new UserNotExistException(String.format(
                     "Пользователь c ID = %d не найден", friendId));
         }
-        u.getFriends().add(friendId);
-        f.getFriends().add(userId);
+//        u.getFriends().add(friendId);
+//        f.getFriends().add(userId);
         return u;
     }
+
+    @Override
+    public List<User> findFriends(Integer userId) {
+        return null;
+    }
+
     private Integer generateId() {
         return ++id;
     }

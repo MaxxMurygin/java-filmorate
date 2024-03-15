@@ -1,10 +1,11 @@
-package com.github.maxxmurygin.filmorate.storage.user;
+package com.github.maxxmurygin.filmorate.repository;
 
 import com.github.maxxmurygin.filmorate.model.User;
 
 import java.util.Collection;
+import java.util.List;
 
-public interface UserStorage {
+public interface UserRepository {
 
     User create(User user);
     User update(User user);
@@ -13,4 +14,5 @@ public interface UserStorage {
     Collection<User> findAll();
     User addFriend(Integer userId, Integer friendId);
     User removeFriend(Integer userId, Integer friendId);
+    List<User> findFriends(Integer userId);
 }

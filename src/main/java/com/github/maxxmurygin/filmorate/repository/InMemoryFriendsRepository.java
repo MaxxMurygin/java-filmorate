@@ -1,0 +1,53 @@
+package com.github.maxxmurygin.filmorate.repository;
+
+import com.github.maxxmurygin.filmorate.model.User;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Repository
+@Primary
+@Slf4j
+public class InMemoryFriendsRepository implements FriendsRepository{
+    private final HashMap<Integer, Set<Integer>> friends = new HashMap<>();
+    @Override
+    public void addFriend(Integer followingUserId, Integer followedUserid) {
+        if (!friends.containsKey(followingUserId)) {
+            friends.put(followingUserId, new HashSet<>());
+        }
+        friends.get(followingUserId).add(followedUserid);
+    }
+
+    @Override
+    public void removeFriend(Integer followingUserId, Integer followedUserid) {
+        if (!friends.containsKey(followingUserId)) {
+            friends.put(followingUserId, new HashSet<>());
+        }
+        friends.get(followingUserId).remove(followedUserid);
+    }
+
+    @Override
+    public void confirmFriendship(Integer followingUserId, Integer followedUserid) {
+
+    }
+
+    @Override
+    public List<Integer> findFriends(Integer userId) {
+        Set<Integer> userFriends = friends.get(userId);
+
+        if (userFriends == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(userFriends);
+    }
+
+    @Override
+    public List<Integer> findCommonFriends(Integer userId, Integer otherId) {
+        Set<Integer> commonFriends = friends.get(userId);
+        commonFriends.retainAll(friends.get(otherId));
+        return new ArrayList<>(commonFriends);
+    }
+}
