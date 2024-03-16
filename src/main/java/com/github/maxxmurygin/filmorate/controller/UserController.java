@@ -2,9 +2,9 @@ package com.github.maxxmurygin.filmorate.controller;
 
 import com.github.maxxmurygin.filmorate.model.User;
 import com.github.maxxmurygin.filmorate.service.UserService;
-import com.github.maxxmurygin.filmorate.storage.user.InMemoryUserStorage;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -14,14 +14,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    @Autowired
-    public UserController(InMemoryUserStorage storage) {
-        this.userService = new UserService(storage);
-    }
-
 
     @GetMapping
     public Collection<User> findAll() {
@@ -29,6 +24,7 @@ public class UserController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public User create(@Valid @RequestBody User user) {
         return userService.create(user);
 
@@ -51,15 +47,16 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/friends/{friendId}")
-    public User addFriend(@PathVariable Integer userId,
+    public void addFriend(@PathVariable Integer userId,
                           @PathVariable Integer friendId) {
-        return userService.addFriend(userId, friendId);
+        userService.addFriend(userId, friendId);
     }
 
     @DeleteMapping("/{userId}/friends/{friendId}")
-    public User removeFriend(@PathVariable Integer userId,
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeFriend(@PathVariable Integer userId,
                              @PathVariable Integer friendId) {
-        return userService.removeFriend(userId, friendId);
+        userService.removeFriend(userId, friendId);
     }
 
     @GetMapping("/{userId}/friends/common/{otherId}")

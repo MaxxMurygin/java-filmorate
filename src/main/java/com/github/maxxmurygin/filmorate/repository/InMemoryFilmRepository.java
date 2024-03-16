@@ -1,17 +1,22 @@
-package com.github.maxxmurygin.filmorate.storage.film;
+package com.github.maxxmurygin.filmorate.repository;
 
 import com.github.maxxmurygin.filmorate.exeptions.FilmNotExistException;
 import com.github.maxxmurygin.filmorate.model.Film;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Service
+@Repository
+@Primary
 @Slf4j
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmRepository implements FilmRepository {
     private final HashMap<Integer, Film> films = new HashMap<>();
     private Integer id = 0;
 
@@ -19,7 +24,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film create(Film film) {
         Integer id = generateId();
         film.setId(id);
-        film.setLikes(new HashSet<>());
         films.put(id, film);
         log.debug("Фильм {} ID {} создан", film.getName(), film.getId());
         return film;
@@ -42,33 +46,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> findAll() {
-        return films.values();
+    public List<Film> findAll() {
+        return new ArrayList<>(films.values());
     }
 
-    @Override
-    public Film like(Integer filmId, Integer userId) {
-        Film f = films.get(filmId);
-
-        if (f == null) {
-            throw new FilmNotExistException(String.format(
-                    "Фильм c ID = %d не найден", filmId));
-        }
-        f.getLikes().add(userId);
-        return f;
-    }
-
-    @Override
-    public Film dislike(Integer filmId, Integer userId) {
-        Film f = films.get(filmId);
-
-        if (f == null) {
-            throw new FilmNotExistException(String.format(
-                    "Фильм c ID = %d не найден", filmId));
-        }
-        f.getLikes().remove(userId);
-        return f;
-    }
 
     private Integer generateId() {
         return ++id;

@@ -2,6 +2,8 @@ package com.github.maxxmurygin.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +12,8 @@ import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 import java.util.Set;
 
+@Component
+@Scope("prototype")
 @Data
 @Builder
 public class User {
@@ -18,5 +22,4 @@ public class User {
     private @NotBlank String login;
     private String name;
     private @NotNull @PastOrPresent LocalDate birthday;
-    private Set<Integer> friends;
 }
