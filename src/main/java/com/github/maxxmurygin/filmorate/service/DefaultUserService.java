@@ -26,32 +26,34 @@ public class DefaultUserService implements UserService {
 
     @Override
     public User create(User user) {
-        User existing = userRepository.findByEmail(user.getEmail());
+//        if ( userRepository.findByLogin(user.getLogin()) != null) {
+//            throw new UserAlreadyExistException(String.format(
+//                    "Пользователь с login = %s уже существует", user.getLogin()));
+//        }
+//        if (userRepository.findByEmail(user.getEmail()) != null) {
+//            throw new UserAlreadyExistException(String.format(
+//                    "Пользователь с email = %s уже существует", user.getEmail()));
+//        }
 
-        if (existing != null) {
-            log.debug(existing.getEmail());
-            throw new UserAlreadyExistException(String.format(
-                    "Пользователь c ID = %d с Email %s уже существует", existing.getId(), existing.getEmail()));
-        }
         validator.validate(user);
-        log.debug("Создаем пользователя {}", user.getLogin());
+        log.debug("DefaultUserService: Создаем пользователя {}", user.getLogin());
         User u = userRepository.create(user);
-        log.debug("Создан пользователь {}", u.getLogin());
+        log.debug("DefaultUserService: Создан пользователь {}", u.getLogin());
         return u;
     }
 
     @Override
     public User update(User user) {
-        User stored = userRepository.findById(user.getId());
-
-        if (stored == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователя c ID = %d с Email %s не существует", user.getId(), user.getEmail()));
-        }
+//        User stored = userRepository.findById(user.getId());
+//
+//        if (stored == null) {
+//            throw new UserNotExistException(String.format(
+//                    "Пользователя c ID = %d с Email %s не существует", user.getId(), user.getEmail()));
+//        }
         validator.validate(user);
-        log.debug("Создаем пользователя {}", user.getLogin());
+        log.debug("Обновляем пользователя {}", user.getLogin());
         User u = userRepository.update(user);
-        log.debug("Создан пользователь {}", u.getLogin());
+        log.debug("Обновлен пользователь {}", user.getLogin());
         return u;
     }
 
