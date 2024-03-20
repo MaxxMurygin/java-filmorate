@@ -1,16 +1,15 @@
 package com.github.maxxmurygin.filmorate.repository;
 
-import com.github.maxxmurygin.filmorate.exeptions.UserNotExistException;
 import com.github.maxxmurygin.filmorate.model.User;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Optional;
 
 @Repository
-@Primary
+//@Primary
 @Slf4j
 public class InMemoryUserRepository implements UserRepository {
     private final HashMap<Integer, User> users = new HashMap<>();
@@ -45,6 +44,11 @@ public class InMemoryUserRepository implements UserRepository {
                 .filter(u -> u.getEmail().equals(email))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public User findByLogin(String login) {
+        return null;
     }
 
     @Override
