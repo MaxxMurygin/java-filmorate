@@ -31,6 +31,7 @@ class H2UserRepositoryTest {
                 .birthday(LocalDate.of(1853, 3, 30))
                 .build();
     }
+
     @Test
     void create() {
         userRepository.create(user);
@@ -38,7 +39,6 @@ class H2UserRepositoryTest {
 
         assertNotNull(stored);
         assertEquals(user, stored);
-
     }
 
     @Test
