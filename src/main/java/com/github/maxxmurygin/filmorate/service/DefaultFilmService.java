@@ -1,19 +1,22 @@
 package com.github.maxxmurygin.filmorate.service;
 
-import com.github.maxxmurygin.filmorate.exeptions.FilmAlreadyExistException;
 import com.github.maxxmurygin.filmorate.exeptions.FilmNotExistException;
+import com.github.maxxmurygin.filmorate.exeptions.GenreNotExistException;
 import com.github.maxxmurygin.filmorate.exeptions.UserNotExistException;
 import com.github.maxxmurygin.filmorate.model.Film;
+import com.github.maxxmurygin.filmorate.model.Genres;
+import com.github.maxxmurygin.filmorate.model.Mpa;
 import com.github.maxxmurygin.filmorate.repository.FilmRepository;
+import com.github.maxxmurygin.filmorate.repository.GenreRepository;
 import com.github.maxxmurygin.filmorate.repository.LikesRepository;
+import com.github.maxxmurygin.filmorate.repository.MpaRepository;
 import com.github.maxxmurygin.filmorate.validators.FilmValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,30 +24,37 @@ import java.util.stream.Collectors;
 public class DefaultFilmService implements FilmService {
     private final FilmRepository filmRepository;
     private final LikesRepository likesRepository;
+    private final MpaRepository mpaRepository;
+    private final GenreRepository genreRepository;
     private final FilmValidator validator;
     private final UserService userService;
 
-
     @Override
     public Film create(Film film) {
-        Film existing = filmRepository.findById(film.getId());
+        Mpa mpa = film.getMpa();
 
-        if (existing != null) {
-            throw new FilmAlreadyExistException(String.format(
-                    "Фильм %s с ID %d уже существует", film.getName(), film.getId()));
+        if (mpa == null) {
+            film.setMpa(Mpa.builder()
+                    .id(1)
+                    .name("G")
+                    .build());
+        }
+        Film f = filmRepository.create(film);
+
+        film.setId(f.getId());
+        if (film.getGenres() != null) {
+            if (!film.getGenres().isEmpty()) {
+                genreRepository.addToFilm(film.getId(), film.getGenres());
+            }
         }
         validator.validate(film);
-        return filmRepository.create(film);
+        return film;
     }
 
     @Override
     public Film update(Film film) {
-        Film stored = filmRepository.findById(film.getId());
-
-        if (stored == null) {
-            throw new FilmNotExistException(String.format(
-                    "Фильма %s с ID %d не существует", film.getName(), film.getId()));
-        }
+        filmRepository.findById(film.getId()).orElseThrow(() -> new FilmNotExistException(
+                String.format("Фильма c ID %d не существует", film.getId())));
         validator.validate(film);
         return filmRepository.update(film);
     }
@@ -55,12 +65,11 @@ public class DefaultFilmService implements FilmService {
             throw new UserNotExistException(String.format(
                     "Пользователь c ID = %d не найден", userId));
         }
-        if (filmRepository.findById(filmId) == null) {
-            throw new UserNotExistException(String.format(
-                    "Фильм c ID = %d не найден", filmId));
-        }
+        Film f = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotExistException(
+                String.format("Фильма c ID %d не существует", filmId)));
+
         likesRepository.addLike(filmId, userId);
-        return filmRepository.findById(filmId);
+        return f;
     }
 
     @Override
@@ -69,10 +78,8 @@ public class DefaultFilmService implements FilmService {
             throw new UserNotExistException(String.format(
                     "Пользователь c ID = %d не найден", userId));
         }
-        if (filmRepository.findById(filmId) == null) {
-            throw new UserNotExistException(String.format(
-                    "Фильм c ID = %d не найден", filmId));
-        }
+        filmRepository.findById(filmId).orElseThrow(() -> new FilmNotExistException(
+                String.format("Фильма c ID %d не существует", filmId)));
         likesRepository.removeLike(filmId, userId);
     }
 
@@ -82,28 +89,47 @@ public class DefaultFilmService implements FilmService {
     }
 
     @Override
-    public Film findById(Integer id) {
-        Film f = filmRepository.findById(id);
-
-        if (f == null) {
-            throw new FilmNotExistException("Фильм не найден");
-        }
+    public Film findById(Integer filmId) {
+        Film f = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotExistException(
+                String.format("Фильма c ID %d не существует", filmId)));
+        f.setGenres(new HashSet<>(genreRepository.findByFilm(filmId)));
         return f;
     }
 
     @Override
-    public List<Film> getPopular(Integer count) {
-        List<Integer> likesFromRepository = likesRepository.getPopular(count);
+    public Genres findGenreById(Integer id) {
+        Genres g = genreRepository.findById(id);
 
-        if (likesFromRepository.isEmpty()) {
-            return filmRepository.findAll()
-                    .stream()
-                    .limit(count)
-                    .collect(Collectors.toList());
+        if (g == null) {
+            throw new GenreNotExistException(String.format(
+                    "Жанр c ID = %d не найден", id));
         }
-        return likesFromRepository
-                .stream()
-                .map(filmRepository::findById)
-                .collect(Collectors.toList());
+        return g;
+    }
+
+    @Override
+    public List<Genres> findGenreAll() {
+        return genreRepository.findAll();
+    }
+
+    @Override
+    public Mpa findMpaById(Integer id) {
+        Mpa mpa = mpaRepository.findById(id);
+
+        if (mpa == null) {
+            throw new GenreNotExistException(String.format(
+                    "Рейтинг MPA c ID = %d не найден", id));
+        }
+        return mpa;
+    }
+
+    @Override
+    public List<Mpa> findMpaAll() {
+        return mpaRepository.findAll();
+    }
+
+    @Override
+    public List<Film> getPopular(Integer count) {
+        return filmRepository.getPopular(count);
     }
 }

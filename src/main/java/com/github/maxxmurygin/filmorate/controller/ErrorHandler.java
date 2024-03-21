@@ -18,7 +18,8 @@ public class ErrorHandler {
         return new ErrorResponse(String.format("Ошибка валидации: \"%s\".", e.getMessage()));
     }
 
-    @ExceptionHandler({FilmNotExistException.class, UserNotExistException.class})
+    @ExceptionHandler({FilmNotExistException.class, UserNotExistException.class,
+            GenreNotExistException.class, MpaNotExistException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotExist(final RuntimeException e) {
         log.debug(e.getMessage());

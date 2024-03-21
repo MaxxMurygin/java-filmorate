@@ -45,8 +45,6 @@
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
-<!--org.springframework.boot.spring-boot-starter-jdbc-->
-<!--org.springframework.boot.spring-boot-starter-test-->
 	<build>
 		<plugins>
 			<plugin>
