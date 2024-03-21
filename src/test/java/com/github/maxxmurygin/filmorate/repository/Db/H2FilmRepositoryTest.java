@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,14 +56,15 @@ class H2FilmRepositoryTest {
     }
 
     @Test
-    void findById() {
-    }
-
-    @Test
     void findAll() {
-    }
+        filmRepository.create(film);
+        film.setName("Film2");
+        filmRepository.create(film);
+        film.setName("Film3");
+        filmRepository.create(film);
 
-    @Test
-    void getPopular() {
+        List<Film> list = filmRepository.findAll();
+
+        assertEquals(list.size(), 3);
     }
 }
