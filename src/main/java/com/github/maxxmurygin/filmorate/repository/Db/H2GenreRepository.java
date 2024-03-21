@@ -36,8 +36,8 @@ public class H2GenreRepository implements GenreRepository {
     public List<Genres> findByFilm(int filmId) {
         String sql = "SELECT GENRE_ID, GENRE_NAME " +
                 "FROM PUBLIC.FILM_GENRE fg " +
-                "JOIN PUBLIC.GENRES g" +
-                "ON fg.GENRE_ID = g.GENRE_ID" +
+                "JOIN PUBLIC.GENRES g " +
+                "ON fg.GENRE_ID = g.GENRE_ID " +
                 "WHERE fg.FILM_ID = ?";
 
         try {
