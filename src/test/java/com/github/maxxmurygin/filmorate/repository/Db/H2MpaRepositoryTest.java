@@ -1,7 +1,6 @@
 package com.github.maxxmurygin.filmorate.repository.Db;
 
 import com.github.maxxmurygin.filmorate.model.Mpa;
-import com.github.maxxmurygin.filmorate.model.User;
 import com.github.maxxmurygin.filmorate.repository.MpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,10 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
