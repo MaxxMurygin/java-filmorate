@@ -73,8 +73,8 @@ public class FilmController {
         return filmService.findMpaAll();
     }
 
-    @GetMapping("/mpa/{MpaId}")
-    public Mpa findMpaById(@PathVariable int MpaId) {
-        return filmService.findMpaById(MpaId);
+    @GetMapping("/mpa/{mpaId}")
+    public Mpa findMpaById(@PathVariable int mpaId) {
+        return filmService.findMpaById(mpaId);
     }
 }
