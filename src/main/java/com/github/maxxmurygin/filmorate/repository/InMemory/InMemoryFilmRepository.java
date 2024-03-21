@@ -1,20 +1,15 @@
-package com.github.maxxmurygin.filmorate.repository;
+package com.github.maxxmurygin.filmorate.repository.InMemory;
 
-import com.github.maxxmurygin.filmorate.exeptions.FilmNotExistException;
 import com.github.maxxmurygin.filmorate.model.Film;
+import com.github.maxxmurygin.filmorate.repository.FilmRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
-@Primary
 @Slf4j
 public class InMemoryFilmRepository implements FilmRepository {
     private final HashMap<Integer, Film> films = new HashMap<>();
@@ -48,6 +43,11 @@ public class InMemoryFilmRepository implements FilmRepository {
     @Override
     public List<Film> findAll() {
         return new ArrayList<>(films.values());
+    }
+
+    @Override
+    public List<Film> getPopular(Integer limit) {
+        return null;
     }
 
 

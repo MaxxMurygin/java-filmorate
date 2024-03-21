@@ -1,6 +1,7 @@
-package com.github.maxxmurygin.filmorate.repository;
+package com.github.maxxmurygin.filmorate.repository.InMemory;
 
 import com.github.maxxmurygin.filmorate.model.User;
+import com.github.maxxmurygin.filmorate.repository.FriendsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
@@ -9,9 +10,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-@Primary
 @Slf4j
-public class InMemoryFriendsRepository implements FriendsRepository{
+public class InMemoryFriendsRepository implements FriendsRepository {
     private final HashMap<Integer, Set<Integer>> friends = new HashMap<>();
     @Override
     public void addFriend(Integer followingUserId, Integer followedUserid) {
@@ -33,10 +33,6 @@ public class InMemoryFriendsRepository implements FriendsRepository{
         friends.get(followingUserId).remove(followedUserid);
     }
 
-    @Override
-    public void confirmFriendship(Integer followingUserId, Integer followedUserid) {
-
-    }
 
     @Override
     public List<Integer> findFriends(Integer userId) {

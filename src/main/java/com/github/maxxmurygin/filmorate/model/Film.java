@@ -21,6 +21,6 @@ public class Film {
     private String description;
     private @NotNull LocalDate releaseDate;
     private @NotNull @Positive int duration;
-    private Set<Genre> genre;
-    private Mpa rating;
+    private Set<Genres> genres;
+    private Mpa mpa;
 }

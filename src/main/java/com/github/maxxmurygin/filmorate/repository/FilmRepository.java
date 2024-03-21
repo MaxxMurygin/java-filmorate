@@ -12,4 +12,5 @@ public interface FilmRepository {
 
     Film findById(Integer id);
     List<Film> findAll();
+    List<Film> getPopular(Integer limit);
 }

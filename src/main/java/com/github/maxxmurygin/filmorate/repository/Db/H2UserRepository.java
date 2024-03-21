@@ -1,7 +1,8 @@
-package com.github.maxxmurygin.filmorate.repository;
+package com.github.maxxmurygin.filmorate.repository.Db;
 
 import com.github.maxxmurygin.filmorate.exeptions.UserValidationException;
 import com.github.maxxmurygin.filmorate.model.User;
+import com.github.maxxmurygin.filmorate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -25,7 +26,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Primary
 @Slf4j
-public class H2UserRepository implements UserRepository{
+public class H2UserRepository implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
@@ -85,6 +86,18 @@ public class H2UserRepository implements UserRepository{
     }
 
     @Override
+    public User findById(Integer id) {
+        String sql = "SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY " +
+                "FROM PUBLIC.USERS " +
+                "WHERE USER_ID = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new UserRowMapper(), id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    @Override
     public User update(User user) {
         String sql = "UPDATE PUBLIC.USERS SET EMAIL = ?, LOGIN = ?, NAME = ?, BIRTHDAY = ? " +
                 "WHERE USER_ID = ?";
@@ -105,11 +118,6 @@ public class H2UserRepository implements UserRepository{
         return user;
     }
 
-
-    @Override
-    public User findById(Integer id) {
-        return null;
-    }
 
     @Override
     public Collection<User> findAll() {

@@ -1,6 +1,7 @@
-package com.github.maxxmurygin.filmorate.repository;
+package com.github.maxxmurygin.filmorate.repository.InMemory;
 
 import com.github.maxxmurygin.filmorate.model.User;
+import com.github.maxxmurygin.filmorate.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
