@@ -4,5 +4,6 @@ import java.util.List;
 
 public interface LikesRepository {
     void addLike(Integer filmId, Integer userId);
+
     void removeLike(Integer filmId, Integer userId);
 }
