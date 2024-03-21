@@ -123,12 +123,10 @@ public class H2UserRepository implements UserRepository {
         return user;
     }
 
-
     @Override
     public Collection<User> findAll() {
-        String sql = "SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY " +
-                "FROM PUBLIC.USERS";
-        
+        String sql = "SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY FROM PUBLIC.USERS";
+
         try {
             return jdbcTemplate.query(sql, new UserRowMapper());
         } catch (EmptyResultDataAccessException e) {
