@@ -18,9 +18,13 @@ public interface FilmService {
     List<Film> findAll();
 
     Film findById(Integer id);
+
     Genres findGenreById(Integer id);
+
     List<Genres> findGenreAll();
+
     Mpa findMpaById(Integer id);
+
     List<Mpa> findMpaAll();
 
     List<Film> getPopular(Integer count);

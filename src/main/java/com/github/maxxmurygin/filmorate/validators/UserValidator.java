@@ -3,8 +3,6 @@ package com.github.maxxmurygin.filmorate.validators;
 import com.github.maxxmurygin.filmorate.exeptions.UserValidationException;
 import com.github.maxxmurygin.filmorate.model.User;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Slf4j
@@ -36,8 +37,8 @@ public class InMemoryFilmRepository implements FilmRepository {
     }
 
     @Override
-    public Film findById(Integer id) {
-        return films.get(id);
+    public Optional<Film> findById(Integer id) {
+        return Optional.ofNullable(films.get(id));
     }
 
     @Override
@@ -47,9 +48,8 @@ public class InMemoryFilmRepository implements FilmRepository {
 
     @Override
     public List<Film> getPopular(Integer limit) {
-        return null;
+        return new ArrayList<>();
     }
-
 
     private Integer generateId() {
         return ++id;

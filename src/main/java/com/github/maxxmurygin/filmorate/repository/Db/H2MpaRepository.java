@@ -27,6 +27,7 @@ public class H2MpaRepository implements MpaRepository {
         String sql = "SELECT RATING_ID, RATING_NAME " +
                 "FROM PUBLIC.RATING " +
                 "WHERE RATING_ID = ?";
+
         try {
             return jdbcTemplate.queryForObject(sql, new MpaRowMapper(), id);
         } catch (EmptyResultDataAccessException e) {
@@ -38,6 +39,7 @@ public class H2MpaRepository implements MpaRepository {
     public List<Mpa> findAll() {
         String sql = "SELECT RATING_ID, RATING_NAME " +
                 "FROM PUBLIC.RATING";
+
         try {
             return jdbcTemplate.query(sql, new MpaRowMapper());
         } catch (EmptyResultDataAccessException e) {

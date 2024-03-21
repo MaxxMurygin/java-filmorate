@@ -1,7 +1,6 @@
-package com.github.maxxmurygin.filmorate.repository;
+package com.github.maxxmurygin.filmorate.repository.Db;
 
 import com.github.maxxmurygin.filmorate.model.User;
-import com.github.maxxmurygin.filmorate.repository.Db.H2UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,7 @@ class H2UserRepositoryTest {
     @Test
     void create() {
         userRepository.create(user);
-        User stored = userRepository.findById(1);
+        User stored = userRepository.findById(1).orElse(null);
 
         assertNotNull(stored);
         assertEquals(user, stored);
@@ -45,7 +44,7 @@ class H2UserRepositoryTest {
     @Test
     void findByLogin() {
         userRepository.create(user);
-        User stored = userRepository.findByLogin("Vincent");
+        User stored = userRepository.findByLogin("Vincent").orElse(null);
 
         assertNotNull(stored);
         assertEquals(user, stored);
@@ -54,7 +53,7 @@ class H2UserRepositoryTest {
     @Test
     void findByEmail() {
         userRepository.create(user);
-        User stored = userRepository.findByEmail("vinc@vincent.net");
+        User stored = userRepository.findByEmail("vinc@vincent.net").orElse(null);
 
         assertNotNull(stored);
         assertEquals(user, stored);
@@ -66,7 +65,7 @@ class H2UserRepositoryTest {
         user.setName("New Vincent");
         user.setEmail("vinc@vincent.net");
         userRepository.update(user);
-        User stored = userRepository.findByLogin("Vincent");
+        User stored = userRepository.findByLogin("Vincent").orElse(null);
 
         assertNotNull(stored);
         assertEquals(stored.getName(), "New Vincent");

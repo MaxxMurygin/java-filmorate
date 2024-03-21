@@ -2,13 +2,12 @@ package com.github.maxxmurygin.filmorate.validators;
 
 import com.github.maxxmurygin.filmorate.exeptions.FilmValidationException;
 import com.github.maxxmurygin.filmorate.model.Film;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FilmValidatorTest {
     private final FilmValidator validator = new FilmValidator();

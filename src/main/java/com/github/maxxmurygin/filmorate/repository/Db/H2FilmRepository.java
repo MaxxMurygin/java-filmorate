@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -59,8 +60,10 @@ public class H2FilmRepository implements FilmRepository {
 
     @Override
     public Film update(Film film) {
-        String sql = "UPDATE PUBLIC.FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, RATING_ID = ? " +
+        String sql = "UPDATE PUBLIC.FILMS SET NAME = ?, DESCRIPTION = ?, " +
+                "RELEASE_DATE = ?, DURATION = ?, RATING_ID = ? " +
                 "WHERE FILM_ID = ?";
+
         log.debug("H2: Film {} start update into DB", film.getName());
         try {
             jdbcTemplate.update(sql, film.getName(), film.getDescription(),
@@ -73,16 +76,17 @@ public class H2FilmRepository implements FilmRepository {
     }
 
     @Override
-    public Film findById(Integer id) {
+    public Optional<Film> findById(Integer id) {
         String sql = "SELECT * " +
                 "FROM PUBLIC.FILMS f " +
                 "JOIN PUBLIC.RATING r " +
                 "ON f.RATING_ID = r.RATING_ID " +
                 "WHERE FILM_ID = ?";
+
         try {
-            return jdbcTemplate.queryForObject(sql, new FilmRowMapper(), id);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new FilmRowMapper(), id));
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -92,6 +96,7 @@ public class H2FilmRepository implements FilmRepository {
                 "FROM PUBLIC.FILMS f " +
                 "JOIN PUBLIC.RATING r " +
                 "ON f.RATING_ID = r.RATING_ID ";
+
         try {
             return jdbcTemplate.query(sql, new FilmRowMapper());
         } catch (EmptyResultDataAccessException e) {

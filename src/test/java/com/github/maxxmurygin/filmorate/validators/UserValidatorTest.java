@@ -2,13 +2,12 @@ package com.github.maxxmurygin.filmorate.validators;
 
 import com.github.maxxmurygin.filmorate.exeptions.UserValidationException;
 import com.github.maxxmurygin.filmorate.model.User;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserValidatorTest {
     private final UserValidator validator = new UserValidator();

@@ -20,7 +20,6 @@ public class InMemoryUserRepository implements UserRepository {
     public User create(User user) {
         Integer id = generateId();
         user.setId(id);
-//        user.setFriends(new HashSet<>());
         users.put(id, user);
         log.debug("Пользователь {} создан ", user.getLogin());
         return user;
@@ -39,22 +38,24 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         return users.values()
                 .stream()
                 .filter(u -> u.getEmail().equals(email))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     @Override
-    public User findByLogin(String login) {
-        return null;
+    public Optional<User> findByLogin(String login) {
+        return users.values()
+                .stream()
+                .filter(u -> u.getLogin().equals(login))
+                .findFirst();
     }
 
     @Override
-    public User findById(Integer id) {
-        return users.get(id);
+    public Optional<User> findById(Integer id) {
+        return Optional.ofNullable(users.get(id));
     }
 
     @Override

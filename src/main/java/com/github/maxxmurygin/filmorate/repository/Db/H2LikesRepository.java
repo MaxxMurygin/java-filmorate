@@ -41,11 +41,4 @@ public class H2LikesRepository implements LikesRepository {
 
         jdbcTemplate.update(sql, userId, filmId);
     }
-
-    @Override
-    public List<Integer> getPopular(Integer limit) {
-        String sql = "";
-
-        return new ArrayList<>();
-    }
 }

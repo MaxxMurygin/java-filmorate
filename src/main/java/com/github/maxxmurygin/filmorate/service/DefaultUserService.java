@@ -1,6 +1,5 @@
 package com.github.maxxmurygin.filmorate.service;
 
-import com.github.maxxmurygin.filmorate.exeptions.UserAlreadyExistException;
 import com.github.maxxmurygin.filmorate.exeptions.UserNotExistException;
 import com.github.maxxmurygin.filmorate.model.User;
 import com.github.maxxmurygin.filmorate.repository.FriendsRepository;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,15 +26,6 @@ public class DefaultUserService implements UserService {
 
     @Override
     public User create(User user) {
-//        if ( userRepository.findByLogin(user.getLogin()) != null) {
-//            throw new UserAlreadyExistException(String.format(
-//                    "Пользователь с login = %s уже существует", user.getLogin()));
-//        }
-//        if (userRepository.findByEmail(user.getEmail()) != null) {
-//            throw new UserAlreadyExistException(String.format(
-//                    "Пользователь с email = %s уже существует", user.getEmail()));
-//        }
-
         validator.validate(user);
         log.debug("DefaultUserService: Создаем пользователя {}", user.getLogin());
         User u = userRepository.create(user);
@@ -44,12 +35,9 @@ public class DefaultUserService implements UserService {
 
     @Override
     public User update(User user) {
-        User stored = userRepository.findById(user.getId());
+        userRepository.findById(user.getId()).orElseThrow(() -> new UserNotExistException(
+                String.format("Пользователь c ID = %d не найден", user.getId())));
 
-        if (stored == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователя c ID = %d и логином = %s не существует", user.getId(), user.getLogin()));
-        }
         validator.validate(user);
         log.debug("DefaultUserService: Обновляем пользователя {}", user.getLogin());
         User u = userRepository.update(user);
@@ -64,27 +52,16 @@ public class DefaultUserService implements UserService {
 
     @Override
     public User findById(Integer userId) {
-        User u = userRepository.findById(userId);
-        if (u == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", userId));
-        }
-        return u;
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(
+                String.format("Пользователь c ID = %d не найден", userId)));
     }
 
     @Override
     public void addFriend(Integer userId, Integer friendId) {
-        User u = userRepository.findById(userId);
-        User f = userRepository.findById(friendId);
-
-        if (u == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", userId));
-        }
-        if (f == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", userId));
-        }
+        userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(
+                String.format("Пользователь c ID = %d не найден", userId)));
+        userRepository.findById(friendId).orElseThrow(() -> new UserNotExistException(
+                String.format("Пользователь c ID = %d не найден", friendId)));
         log.debug("DefaultUserService: Добавляем пользователю {} друга {}", userId, friendId);
         friendsRepository.addFriend(userId, friendId);
         log.debug("DefaultUserService: Добавлен пользователю {} друг {}", userId, friendId);
@@ -92,31 +69,23 @@ public class DefaultUserService implements UserService {
 
     @Override
     public void removeFriend(Integer userId, Integer friendId) {
-        User u = userRepository.findById(userId);
-        User f = userRepository.findById(friendId);
-
-        if (u == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", userId));
-        }
-        if (f == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", friendId));
-        }
+        userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(
+                String.format("Пользователь c ID = %d не найден", userId)));
+        userRepository.findById(friendId).orElseThrow(() -> new UserNotExistException(
+                String.format("Пользователь c ID = %d не найден", friendId)));
         friendsRepository.removeFriend(userId, friendId);
     }
 
     @Override
     public List<User> findFriends(Integer userId) {
-        User u = userRepository.findById(userId);
-
-        if (u == null) {
-            throw new UserNotExistException("Пользователь не найден");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(
+                String.format("Пользователь c ID = %d не найден", userId)));
         log.debug("DefaultUserService: Ищем друзей пользователя {}", userId);
         List<User> friends = friendsRepository.findFriends(userId)
                 .stream()
                 .map(userRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
         log.debug("DefaultUserService: Найдены друзья: {}", friends);
         return friends;
@@ -124,23 +93,19 @@ public class DefaultUserService implements UserService {
 
     @Override
     public List<User> findCommonFriends(Integer userId, Integer otherId) {
-        User u = userRepository.findById(userId);
-        User o = userRepository.findById(otherId);
-        if (u == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", userId));
-        }
-        if (o == null) {
-            throw new UserNotExistException(String.format(
-                    "Пользователь c ID = %d не найден", otherId));
-        }
+        userRepository.findById(userId).orElseThrow(() -> new UserNotExistException(
+                String.format("Пользователь c ID = %d не найден", userId)));
+        userRepository.findById(otherId).orElseThrow(() -> new UserNotExistException(
+                String.format("Пользователь c ID = %d не найден", otherId)));
+
         log.debug("DefaultUserService: Ищем друзей пользователей {}, {}", userId, otherId);
         List<User> commonFriends = friendsRepository.findCommonFriends(userId, otherId)
                 .stream()
                 .map(userRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
         log.debug("DefaultUserService: Найдены друзья: {}", commonFriends);
         return commonFriends;
-
     }
 }

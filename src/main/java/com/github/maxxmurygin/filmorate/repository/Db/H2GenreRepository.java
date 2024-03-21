@@ -39,6 +39,7 @@ public class H2GenreRepository implements GenreRepository {
                 "JOIN PUBLIC.GENRES g" +
                 "ON fg.GENRE_ID = g.GENRE_ID" +
                 "WHERE fg.FILM_ID = ?";
+
         try {
             return jdbcTemplate.query(sql, new GenreRowMapper(), filmId);
         } catch (EmptyResultDataAccessException e) {
@@ -51,6 +52,7 @@ public class H2GenreRepository implements GenreRepository {
         String sql = "SELECT GENRE_ID, GENRE_NAME " +
                 "FROM PUBLIC.GENRES " +
                 "WHERE GENRE_ID = ?";
+
         try {
             return jdbcTemplate.queryForObject(sql, new GenreRowMapper(), id);
         } catch (EmptyResultDataAccessException e) {
@@ -62,6 +64,7 @@ public class H2GenreRepository implements GenreRepository {
     public List<Genres> findAll() {
         String sql = "SELECT GENRE_ID, GENRE_NAME " +
                 "FROM PUBLIC.GENRES";
+
         try {
             return jdbcTemplate.query(sql, new GenreRowMapper());
         } catch (EmptyResultDataAccessException e) {

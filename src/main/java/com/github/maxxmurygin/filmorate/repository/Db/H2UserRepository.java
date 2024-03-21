@@ -21,6 +21,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -62,38 +63,41 @@ public class H2UserRepository implements UserRepository {
     }
 
     @Override
-    public User findByLogin(String login) {
+    public Optional<User> findByLogin(String login) {
         String sql = "SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY " +
                 "FROM PUBLIC.USERS " +
                 "WHERE LOGIN = ?";
+
         try {
-            return jdbcTemplate.queryForObject(sql, new UserRowMapper(),login);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new UserRowMapper(),login));
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
     @Override
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         String sql = "SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY " +
                 "FROM PUBLIC.USERS " +
                 "WHERE EMAIL = ?";
+
         try {
-            return jdbcTemplate.queryForObject(sql, new UserRowMapper(),email);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new UserRowMapper(),email));
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
     @Override
-    public User findById(Integer id) {
+    public Optional<User> findById(Integer id) {
         String sql = "SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY " +
                 "FROM PUBLIC.USERS " +
                 "WHERE USER_ID = ?";
+
         try {
-            return jdbcTemplate.queryForObject(sql, new UserRowMapper(), id);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new UserRowMapper(), id));
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -101,6 +105,7 @@ public class H2UserRepository implements UserRepository {
     public User update(User user) {
         String sql = "UPDATE PUBLIC.USERS SET EMAIL = ?, LOGIN = ?, NAME = ?, BIRTHDAY = ? " +
                 "WHERE USER_ID = ?";
+
         try {
             jdbcTemplate.update(sql, user.getEmail(), user.getLogin(),
                     user.getName(), user.getBirthday(), user.getId());
@@ -123,6 +128,7 @@ public class H2UserRepository implements UserRepository {
     public Collection<User> findAll() {
         String sql = "SELECT USER_ID, EMAIL, LOGIN, NAME, BIRTHDAY " +
                 "FROM PUBLIC.USERS";
+        
         try {
             return jdbcTemplate.query(sql, new UserRowMapper());
         } catch (EmptyResultDataAccessException e) {

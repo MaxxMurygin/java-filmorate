@@ -29,7 +29,6 @@ public class DefaultFilmService implements FilmService {
     private final FilmValidator validator;
     private final UserService userService;
 
-
     @Override
     public Film create(Film film) {
         Mpa mpa = film.getMpa();
@@ -48,21 +47,14 @@ public class DefaultFilmService implements FilmService {
                 genreRepository.addToFilm(film.getId(), film.getGenres());
             }
         }
-
-
-
         validator.validate(film);
         return film;
     }
 
     @Override
     public Film update(Film film) {
-        Film stored = filmRepository.findById(film.getId());
-
-        if (stored == null) {
-            throw new FilmNotExistException(String.format(
-                    "Фильма %s с ID %d не существует", film.getName(), film.getId()));
-        }
+        filmRepository.findById(film.getId()).orElseThrow(() -> new FilmNotExistException(
+                String.format("Фильма c ID %d не существует", film.getId())));
         validator.validate(film);
         return filmRepository.update(film);
     }
@@ -73,12 +65,11 @@ public class DefaultFilmService implements FilmService {
             throw new UserNotExistException(String.format(
                     "Пользователь c ID = %d не найден", userId));
         }
-        if (filmRepository.findById(filmId) == null) {
-            throw new UserNotExistException(String.format(
-                    "Фильм c ID = %d не найден", filmId));
-        }
+        Film f = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotExistException(
+                String.format("Фильма c ID %d не существует", filmId)));
+
         likesRepository.addLike(filmId, userId);
-        return filmRepository.findById(filmId);
+        return f;
     }
 
     @Override
@@ -87,10 +78,8 @@ public class DefaultFilmService implements FilmService {
             throw new UserNotExistException(String.format(
                     "Пользователь c ID = %d не найден", userId));
         }
-        if (filmRepository.findById(filmId) == null) {
-            throw new FilmNotExistException(String.format(
-                    "Фильм c ID = %d не найден", filmId));
-        }
+        filmRepository.findById(filmId).orElseThrow(() -> new FilmNotExistException(
+                String.format("Фильма c ID %d не существует", filmId)));
         likesRepository.removeLike(filmId, userId);
     }
 
@@ -100,14 +89,10 @@ public class DefaultFilmService implements FilmService {
     }
 
     @Override
-    public Film findById(Integer id) {
-        Film f = filmRepository.findById(id);
-
-        if (f == null) {
-            throw new FilmNotExistException(String.format(
-                    "Фильм c ID = %d не найден", id));
-        }
-        f.setGenres(new HashSet<>(genreRepository.findByFilm(id)));
+    public Film findById(Integer filmId) {
+        Film f = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotExistException(
+                String.format("Фильма c ID %d не существует", filmId)));
+        f.setGenres(new HashSet<>(genreRepository.findByFilm(filmId)));
         return f;
     }
 
