@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Optional;
 
 @Repository
-//@Primary
 @Slf4j
 public class InMemoryUserRepository implements UserRepository {
     private final HashMap<Integer, User> users = new HashMap<>();
