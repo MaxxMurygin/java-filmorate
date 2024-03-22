@@ -2,9 +2,11 @@ package com.github.maxxmurygin.filmorate.validators;
 
 import com.github.maxxmurygin.filmorate.exeptions.FilmValidationException;
 import com.github.maxxmurygin.filmorate.model.Film;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+@Component
 public class FilmValidator implements Validator<Film> {
     private static final int DESCRIPTION_LENGTH = 200;
     private static final LocalDate MINIMUM_RELEASE_DATE = LocalDate.of(1895, 12, 28);
