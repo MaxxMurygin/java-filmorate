@@ -34,7 +34,7 @@ public class H2GenreRepository implements GenreRepository {
 
     @Override
     public List<Genres> findByFilm(int filmId) {
-        String sql = "SELECT GENRE_ID, GENRE_NAME " +
+        String sql = "SELECT fg.GENRE_ID, g.GENRE_NAME " +
                 "FROM PUBLIC.FILM_GENRE fg " +
                 "JOIN PUBLIC.GENRES g " +
                 "ON fg.GENRE_ID = g.GENRE_ID " +
