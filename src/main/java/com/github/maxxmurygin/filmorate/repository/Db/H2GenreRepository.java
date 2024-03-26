@@ -8,53 +8,59 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
 @Primary
 @Slf4j
 public class H2GenreRepository implements GenreRepository {
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
     public void addToFilm(int filmId, Set<Genres> genres) {
-        String sql = "INSERT INTO PUBLIC.FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?)";
+        Map<String, Object> params = new HashMap<>();
+        String sql = "INSERT INTO PUBLIC.FILM_GENRE (FILM_ID, GENRE_ID) VALUES (:filmId, :genreId)";
 
         for (Genres genre : genres) {
-            jdbcTemplate.update(sql, filmId, genre.getId());
+            params.put("filmId", filmId);
+            params.put("genreId", genre.getId());
+            jdbcTemplate.update(sql, params);
         }
     }
 
     @Override
     public List<Genres> findByFilm(int filmId) {
+        Map<String, Object> params = new HashMap<>();
         String sql = "SELECT fg.GENRE_ID, g.GENRE_NAME " +
                 "FROM PUBLIC.FILM_GENRE fg " +
                 "JOIN PUBLIC.GENRES g " +
                 "ON fg.GENRE_ID = g.GENRE_ID " +
-                "WHERE fg.FILM_ID = ?";
+                "WHERE fg.FILM_ID = :filmId";
 
+        params.put("filmId", filmId);
         try {
-            return jdbcTemplate.query(sql, new GenreRowMapper(), filmId);
+            return jdbcTemplate.query(sql, params, new GenreRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return new ArrayList<>();
         }
     }
 
     @Override
-    public Genres findById(int id) {
+    public Genres findById(int genreId) {
+        Map<String, Object> params = new HashMap<>();
         String sql = "SELECT GENRE_ID, GENRE_NAME " +
                 "FROM PUBLIC.GENRES " +
-                "WHERE GENRE_ID = ?";
+                "WHERE GENRE_ID = :genreId";
 
+        params.put("genreId", genreId);
         try {
-            return jdbcTemplate.queryForObject(sql, new GenreRowMapper(), id);
+            return jdbcTemplate.queryForObject(sql, params, new GenreRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }

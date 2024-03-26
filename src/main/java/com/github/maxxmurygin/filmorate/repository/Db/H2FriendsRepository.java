@@ -9,13 +9,16 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -23,16 +26,20 @@ import java.util.stream.Collectors;
 @Primary
 @Slf4j
 public class H2FriendsRepository implements FriendsRepository {
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
     public void addFriend(Integer followingUserId, Integer followedUserid) {
+        Map<String, Object> params = new HashMap<>();
         String sql = "INSERT INTO PUBLIC.FOLLOWS (FOLLOWING_USER_ID, FOLLOWED_USER_ID, CREATED_AT) " +
-                "VALUES (?, ?, ?)";
+                "VALUES (:followingUserId, :followedUserId, :creationDate)";
 
         log.debug("H2: Добавляем пользователю {} друга {}", followingUserId, followedUserid);
+        params.put("followingUserId", followingUserId);
+        params.put("followedUserId", followedUserid);
+        params.put("creationDate", LocalDateTime.now());
         try {
-            jdbcTemplate.update(sql, followingUserId, followedUserid, LocalDateTime.now());
+            jdbcTemplate.update(sql, params);
         } catch (DuplicateKeyException e) {
             log.debug("Пользователь ID = {} уже дружит с  ID = {}", followingUserId, followedUserid);
         }
@@ -41,20 +48,25 @@ public class H2FriendsRepository implements FriendsRepository {
 
     @Override
     public void removeFriend(Integer followingUserId, Integer followedUserid) {
+        Map<String, Object> params = new HashMap<>();
         String sql = "DELETE FROM PUBLIC.FOLLOWS  " +
-                "WHERE FOLLOWING_USER_ID = ? AND  FOLLOWED_USER_ID = ?";
+                "WHERE FOLLOWING_USER_ID = :followingUserId AND  FOLLOWED_USER_ID = :followedUserId";
 
-        jdbcTemplate.update(sql, followingUserId, followedUserid);
+        params.put("followingUserId", followingUserId);
+        params.put("followedUserId", followedUserid);
+        jdbcTemplate.update(sql, params);
     }
 
     @Override
     public List<Integer> findFriends(Integer userId) {
+        Map<String, Object> params = new HashMap<>();
         String sql = "SELECT * " +
                 "FROM PUBLIC.FOLLOWS " +
-                "WHERE FOLLOWING_USER_ID = ?";
+                "WHERE FOLLOWING_USER_ID = :userId";
 
+        params.put("userId", userId);
         try {
-            return jdbcTemplate.query(sql, new FriendsRowMapper(), userId)
+            return jdbcTemplate.query(sql, params, new FriendsRowMapper())
                     .stream()
                     .map(Friends::getFollowedUserid)
                     .collect(Collectors.toList());
@@ -65,15 +77,18 @@ public class H2FriendsRepository implements FriendsRepository {
 
     @Override
     public List<Integer> findCommonFriends(Integer userId, Integer otherId) {
+        Map<String, Object> params = new HashMap<>();
         String sql = "SELECT  * " +
                 "FROM PUBLIC.FOLLOWS " +
-                "WHERE FOLLOWING_USER_ID = ? AND FOLLOWED_USER_ID IN (" +
+                "WHERE FOLLOWING_USER_ID = :userId AND FOLLOWED_USER_ID IN (" +
                 "SELECT FOLLOWED_USER_ID " +
                 "FROM PUBLIC.FOLLOWS " +
-                "WHERE FOLLOWING_USER_ID = ?)";
+                "WHERE FOLLOWING_USER_ID = :otherId)";
 
+        params.put("userId", userId);
+        params.put("otherId", otherId);
         try {
-            return jdbcTemplate.query(sql, new FriendsRowMapper(), userId, otherId)
+            return jdbcTemplate.query(sql, params, new FriendsRowMapper())
                     .stream()
                     .map(Friends::getFollowedUserid)
                     .collect(Collectors.toList());

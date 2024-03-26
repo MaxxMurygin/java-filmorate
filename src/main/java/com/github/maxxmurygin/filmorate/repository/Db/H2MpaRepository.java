@@ -8,28 +8,33 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
 @Primary
 @Slf4j
 public class H2MpaRepository implements MpaRepository {
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
-    public Mpa findById(int id) {
+    public Mpa findById(int mpaId) {
+        Map<String, Object> params = new HashMap<>();
         String sql = "SELECT RATING_ID, RATING_NAME " +
                 "FROM PUBLIC.RATING " +
-                "WHERE RATING_ID = ?";
+                "WHERE RATING_ID = :mpaId";
 
+        params.put("mpaId", mpaId);
         try {
-            return jdbcTemplate.queryForObject(sql, new MpaRowMapper(), id);
+            return jdbcTemplate.queryForObject(sql, params, new MpaRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
